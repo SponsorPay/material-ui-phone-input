@@ -2,7 +2,7 @@ import * as React from "react";
 import MenuItem, {MenuItemProps} from "@material-ui/core/MenuItem/MenuItem"
 import Grid from "@material-ui/core/Grid/Grid"
 import Typography from "@material-ui/core/Typography"
-import withStyles from "@material-ui/core/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles"
 import {Country} from "./country"
 import {CountryIcon} from "./countryIcon"
 
@@ -33,7 +33,6 @@ const styles = {
   },
   menuItem: {
     padding: "0 24px",
-    width: 300
   }
 }
 

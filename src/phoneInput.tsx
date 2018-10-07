@@ -13,7 +13,8 @@ import {Country} from "./country"
 import {CountryIcon} from "./countryIcon"
 import {CountryMenuItem} from "./countryMenuItem"
 import {List, ListRowProps} from "react-virtualized"
-import Input from "@material-ui/core/Input/Input";
+import Input from "@material-ui/core/Input/Input"
+import Typography from "@material-ui/core/Typography/Typography"
 
 const sortBy = require("lodash/sortBy")
 
@@ -64,10 +65,21 @@ export interface PhoneInputProps {
   error: boolean,
   helperText: string
   classes?: Record<string, string>
+  width?: number
+}
+
+export interface PhoneInputState {
+  phone: string,
+  anchorEl: null,
+  country: Country,
+  countries: Country[],
+  search: string
 }
 
 @(withStyles(styles) as any)
-export class PhoneInput extends React.Component<PhoneInputProps> {
+export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState> {
+  list!: List
+
   state = {
     phone: "",
     anchorEl: null as any,
@@ -103,7 +115,7 @@ export class PhoneInput extends React.Component<PhoneInputProps> {
 
   handleSearch = (event: any) => {
     const search = event.target.value
-    const countries = allCountries.filter(country => new RegExp(`${search}.*`, "i").test(country.name))
+    const countries = allCountries.filter(country => new RegExp(`${search}`, "i").test(country.name))
     this.setState({
       search,
       countries
@@ -122,7 +134,8 @@ export class PhoneInput extends React.Component<PhoneInputProps> {
       anchorEl: null,
       search: "",
       phone,
-      country
+      country,
+      countries: allCountries
     })
   }
 
@@ -141,6 +154,16 @@ export class PhoneInput extends React.Component<PhoneInputProps> {
       onSelectCountry={this.handleCountryClick}
       search={this.state.search}
     />
+  }
+
+  listRef = (list: List) => {
+    this.list = list
+  }
+
+  componentDidUpdate(prevProps: PhoneInputProps, prevState: PhoneInputState) {
+    if (prevState.countries != this.state.countries) {
+      this.list && this.list.forceUpdateGrid()
+    }
   }
 
   render() {
@@ -180,10 +203,12 @@ export class PhoneInput extends React.Component<PhoneInputProps> {
             <ClickAwayListener onClickAway={this.handleClose}>
               <Paper>
                 <Input onChange={this.handleSearch} autoFocus disableUnderline
-                       inputProps={{padding: 0}} value={this.state.search} className={classes.hiddenInput}/>
-                <List height={250} rowHeight={36} rowCount={countries.length} width={300}
-                      rowRenderer={this.rowRenderer} overscanRowCount={10}
-                />
+                       inputProps={{padding: 0}} value={this.state.search}
+                       className={classes.hiddenInput}/>
+                {countries.length < 1 ? <Typography>There is no country match the result</Typography> :
+                  <List ref={this.listRef} height={250} rowHeight={36} rowCount={countries.length}
+                        width={this.props.width || 331} rowRenderer={this.rowRenderer} overscanRowCount={10}
+                  />}
               </Paper>
             </ClickAwayListener>
           </Paper>
