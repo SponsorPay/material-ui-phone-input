@@ -2,8 +2,8 @@
   "name": "material-ui-phone-input",
   "version": "1.1.1",
   "description": "",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "rm -rf build && npm run compile",
     "ci": "npm run build && npm run lint && npm test",
@@ -34,7 +34,6 @@
     "@types/google-libphonenumber": "^7.4.16",
     "@types/react-select": "^2.0.3",
     "@types/react-text-mask": "^5.4.2",
-    "classnames": "^2.2.6",
     "country-data": "0.0.31",
     "data-class-copy": "^3.0.0",
     "formstate": "^1.0.2",
@@ -57,7 +56,7 @@
     "@material-ui/core": "^1.4.3",
     "@material-ui/icons": "^2.0.1",
     "@types/angular-ui-router": "^1.1.40",
-    "@types/classnames": "^2.2.5",
+    "@types/classnames": "^2.2.6",
     "@types/fontfaceobserver": "^0.0.6",
     "@types/history": "^4.7.0",
     "@types/immutable": "^3.8.7",
@@ -72,9 +71,13 @@
     "@types/react-virtualized": "^9.18.7",
     "@types/webpack-env": "^1.13.6",
     "babel-core": "^6.26.3",
+    "classnames": "^2.2.6",
     "codecov": "^3.1.0",
+    "dynamic-cdn-webpack-plugin": "^4.0.0",
+    "html-webpack-plugin": "^3.2.0",
     "mocha": "^5.2.0",
     "mocha-clean": "^1.0.0",
+    "module-to-cdn": "^3.1.2",
     "nyc": "^13.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -82,8 +85,9 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.10.0",
     "typescript": "^3.1.1",
-    "webpack": "^3.12.0",
+    "webpack": "^4.20.2",
     "webpack-bundle-analyzer": "^2.13.1",
-    "webpack-dev-server": "^2.11.1"
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.9"
   }
 }

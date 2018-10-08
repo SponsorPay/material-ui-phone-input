@@ -5,7 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const DynamicCdnWebpackPlugin = require('dynamic-cdn-webpack-plugin');
 
 module.exports = {
-  mode: "development",
   entry: {
     phone: ["./lib/example.js"],
   },
@@ -18,20 +17,25 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
-    compress: true,
     historyApiFallback: true
   },
   optimization: {
+    minimize: true,
     splitChunks: {
       chunks: 'all'
     }
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
     new HtmlWebpackPlugin({
       filename: path.resolve(__dirname, 'public/index.html'),
       template: path.resolve(__dirname, 'index.html'),
     }),
-    new DynamicCdnWebpackPlugin(),
-    // new BundleAnalyzerPlugin()
+    new DynamicCdnWebpackPlugin({
+      env: 'production'
+    }),
+    new BundleAnalyzerPlugin()
   ]
 }

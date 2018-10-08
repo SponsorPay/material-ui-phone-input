@@ -9,7 +9,6 @@ import {CountryIcon} from "./countryIcon"
 const styles = {
   countryName: {
     fontSize: "1em",
-    paddingLeft: "0.5em",
     flex: 1,
   },
   maxLines: {
@@ -21,18 +20,21 @@ const styles = {
   } as any,
   dialNumber: {
     marginLeft: "auto",
-    fontSize: "1em",
-    fontFamily: "AvertaCY",
   },
   countryCode: {
     color: "#1D0047",
     fontSize: "1em",
   },
   countryNameList: {
-    color: "#1D0047", fontSize: "1em", fontWeight: 300
+    color: "#1D0047",
+    fontWeight: 300,
+    paddingLeft: 8
   },
   menuItem: {
-    padding: "0 24px",
+    padding: "0 8px",
+  },
+  countryFlag: {
+    display: "flex"
   }
 }
 
@@ -65,10 +67,9 @@ export class CountryMenuItem extends React.Component<CountryItemProps> {
     const {country, search, classes: classesProp, onSelectCountry, ...props} = this.props
     const classes = classesProp!
     return <MenuItem component="div" onClick={this.handleClick} className={classes.menuItem} {...props}>
-      <Grid container direction="row">
-        <Grid item>
-          <CountryIcon country={country}/>
-        </Grid>
+      <Grid container direction="row" alignItems="center" wrap="nowrap">
+        <CountryIcon className={classes.countryFlag} country={country}/>
+
         <Grid zeroMinWidth item className={classes.countryName}>
           <div className={classes.maxLines}>{this.highlightSearch(country.name, search)}</div>
         </Grid>

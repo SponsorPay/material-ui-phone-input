@@ -3,3 +3,4 @@ build
 .idea
 /coverage
 /.nyc_output
+/lib

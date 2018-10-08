@@ -14,16 +14,17 @@
       "es2015.core"
     ],
     "declaration": true,
-    "outDir": "build",
+    "outDir": "lib",
     "jsx": "react",
     "importHelpers": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "moduleResolution": "node",
-    "baseUrl": ".",
+    "baseUrl": "."
   },
   "include": [
-    "src/**/*.ts*"
+    "src/**/*.ts*",
+    "test/**/*.ts*"
   ]
 }
