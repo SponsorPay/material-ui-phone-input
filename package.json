@@ -50,7 +50,6 @@
     "react-text-mask": "^5.4.3",
     "react-transition-group": "^2.4.0",
     "react-virtualized": "^9.18.0",
-    "svg-country-flags": "^1.2.6",
     "text-mask-addons": "^3.8.0",
     "ts-trait": "^4.1.0"
   },

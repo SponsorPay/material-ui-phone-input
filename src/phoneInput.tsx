@@ -115,7 +115,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
 
   handleSearch: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const search = event.target.value
-    const countries = allCountries.filter(country => new RegExp(`${search}`, "i").test(country.name))
+    const countries = allCountries.filter(country => new RegExp(search, "i").test(country.name))
     this.setState({
       search,
       countries
