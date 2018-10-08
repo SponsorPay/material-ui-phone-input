@@ -227,7 +227,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
 
       {fieldTheme ? <MuiThemeProvider theme={fieldTheme}>{field}</MuiThemeProvider> : field}
 
-      <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement={"bottom-start"} className={classes.popper}>
+      <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-start" className={classes.popper}>
         <ClickAwayListener onClickAway={this.handleClose}>
           {listTheme ? <MuiThemeProvider theme={listTheme}>{list}</MuiThemeProvider> : list}
         </ClickAwayListener>
