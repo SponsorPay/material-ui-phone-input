@@ -194,7 +194,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
       onChange={this.handleChange}
       onBlur={this.handleBlur}
       label={label}
-      fullWidth={true}
+      fullWidth
       value={this.state.phone}
       className={classes.textField}
       error={error}
