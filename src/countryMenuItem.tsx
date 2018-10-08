@@ -1,14 +1,15 @@
-import * as React from "react";
-import MenuItem, {MenuItemProps} from "@material-ui/core/MenuItem/MenuItem"
 import Grid from "@material-ui/core/Grid/Grid"
-import Typography from "@material-ui/core/Typography"
+import {MenuItemClassKey} from "@material-ui/core/MenuItem"
+import MenuItem, {MenuItemProps} from "@material-ui/core/MenuItem/MenuItem"
 import withStyles from "@material-ui/core/styles/withStyles"
+import Typography from "@material-ui/core/Typography"
+import * as React from "react";
+import {Classes} from "./classes"
 import {Country} from "./country"
 import {CountryIcon} from "./countryIcon"
 
-const styles = {
+export const styles = {
   countryName: {
-    fontSize: "1em",
     flex: 1,
   },
   maxLines: {
@@ -21,12 +22,7 @@ const styles = {
   dialNumber: {
     marginLeft: "auto",
   },
-  countryCode: {
-    color: "#1D0047",
-    fontSize: "1em",
-  },
   countryNameList: {
-    color: "#1D0047",
     fontWeight: 300,
     paddingLeft: 8
   },
@@ -41,7 +37,7 @@ const styles = {
 export interface CountryItemProps extends MenuItemProps {
   search: string
   onSelectCountry: (country: Country) => any
-  classes?: Record<string, string>
+  classes?: Classes<typeof styles> & Record<MenuItemClassKey, string>
   country: Country
 }
 
@@ -74,7 +70,7 @@ export class CountryMenuItem extends React.Component<CountryItemProps> {
           <div className={classes.maxLines}>{this.highlightSearch(country.name, search)}</div>
         </Grid>
         <Grid item className={classes.dialNumber}>
-          <Typography className={classes.countryCode}>{country.countryCallingCodes[0]}</Typography>
+          <Typography>{country.countryCallingCodes[0]}</Typography>
         </Grid>
       </Grid>
     </MenuItem>

@@ -4,16 +4,19 @@ import Grid from "@material-ui/core/Grid/Grid"
 import InputAdornment from "@material-ui/core/InputAdornment/InputAdornment"
 import Paper from "@material-ui/core/Paper/Paper"
 import Popper from "@material-ui/core/Popper/Popper"
+import {Theme} from "@material-ui/core/styles/createMuiTheme"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import withStyles from "@material-ui/core/styles/withStyles"
 import TextField from "@material-ui/core/TextField/TextField"
+import Typography from "@material-ui/core/Typography/Typography"
 import ArrowIcon from "@material-ui/icons/ArrowDropDown"
 import {AsYouType} from "libphonenumber-js"
 import * as React from "react"
+import {List, ListRowProps} from "react-virtualized/dist/commonjs/List"
+import {Classes} from "./classes"
 import {Country} from "./country"
 import {CountryIcon} from "./countryIcon"
 import {CountryMenuItem} from "./countryMenuItem"
-import {List, ListRowProps} from "react-virtualized/dist/commonjs/List"
-import Typography from "@material-ui/core/Typography/Typography"
 
 const sortBy = require("lodash/sortBy")
 
@@ -33,10 +36,10 @@ const unknownCountry: Country = {
   countryCallingCodes: [""]
 }
 
-const styles = {
+export const styles = {
   worldIcon: {
     backgroundColor: "#9B9B9B",
-    color: "FFFFFF"
+    color: "#fff"
   },
   hiddenInput: {
     width: 0,
@@ -48,9 +51,6 @@ const styles = {
   hiddenInputRoot: {
     overflow: "hidden"
   },
-  popover: {
-    maxHeight: "14em",
-  },
   list: {
     outline: "none" as any
   },
@@ -58,7 +58,9 @@ const styles = {
     zIndex: 999
   },
   input: {marginRight: 0},
-  textField: {paddingBottom: 0},
+  textField: {
+    paddingBottom: 0
+  },
   button: {
     padding: 0
   },
@@ -78,9 +80,11 @@ export interface PhoneInputProps {
   onChange?: (alpha2: string, phoneNumber: string) => any,
   error?: boolean,
   helperText?: string
-  classes?: Record<string, string>
-  width?: number,
+  classes?: Classes<typeof styles>
+  width?: number
   label?: string
+  fieldTheme?: Theme
+  listTheme?: Theme
 }
 
 export interface PhoneInputState {
@@ -182,43 +186,50 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
   }
 
   render() {
-    const {error, helperText, label, classes: classesProp} = this.props
+    const {error, helperText, label, classes: classesProp, fieldTheme, listTheme} = this.props
     const {anchorEl, countries, country} = this.state
     const classes = classesProp!
+
+    const field = <TextField
+      onChange={this.handleChange}
+      onBlur={this.handleBlur}
+      label={label}
+      fullWidth={true}
+      value={this.state.phone}
+      className={classes.textField}
+      error={error}
+      helperText={helperText}
+      InputProps={{
+        startAdornment:
+          <InputAdornment position="start" className={classes.input}>
+            <ButtonBase component="div" onClick={this.handleClick} className={classes.button}>
+              <Grid container direction="row" alignItems="center">
+                <CountryIcon country={country} className={classes.buttonFlag}/>
+                <ArrowIcon/>
+              </Grid>
+            </ButtonBase>
+          </InputAdornment>
+      }}
+    />
+
+    const list = <Paper className={classes.paper}>
+      <div className={classes.hiddenInputRoot}>
+        <input className={classes.hiddenInput} onChange={this.handleSearch} autoFocus value={this.state.search}/>
+      </div>
+      {!countries.length ? <Typography>There is no country match the result</Typography> :
+        <List ref={this.listRef} height={250} rowHeight={36} rowCount={countries.length}
+              className={classes.list}
+              width={this.props.width || 331} rowRenderer={this.rowRenderer} overscanRowCount={10}
+        />}
+    </Paper>
+
     return <React.Fragment>
-      <TextField
-        onChange={this.handleChange}
-        onBlur={this.handleBlur}
-        label={label}
-        fullWidth={true}
-        value={this.state.phone}
-        className={classes.textField}
-        error={error}
-        helperText={helperText}
-        InputProps={{
-          startAdornment:
-            <InputAdornment position="start" className={classes.input}>
-              <ButtonBase component="div" onClick={this.handleClick} className={classes.button}>
-                <Grid container direction="row" alignItems="center">
-                  <CountryIcon country={country} className={classes.buttonFlag}/>
-                  <ArrowIcon/>
-                </Grid>
-              </ButtonBase>
-            </InputAdornment>
-        }}
-      />
+
+      {fieldTheme ? <MuiThemeProvider theme={fieldTheme}>{field}</MuiThemeProvider> : field}
+
       <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement={"bottom-start"} className={classes.popper}>
         <ClickAwayListener onClickAway={this.handleClose}>
-          <Paper className={classes.paper}>
-            <div className={classes.hiddenInputRoot}>
-              <input className={classes.hiddenInput} onChange={this.handleSearch} autoFocus value={this.state.search}/>
-            </div>
-            {!countries.length ? <Typography>There is no country match the result</Typography> :
-              <List ref={this.listRef} height={250} rowHeight={36} rowCount={countries.length}
-                    className={classes.list}
-                    width={this.props.width || 331} rowRenderer={this.rowRenderer} overscanRowCount={10}
-              />}
-          </Paper>
+          {listTheme ? <MuiThemeProvider theme={listTheme}>{list}</MuiThemeProvider> : list}
         </ClickAwayListener>
       </Popper>
     </React.Fragment>
