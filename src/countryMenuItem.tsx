@@ -62,7 +62,7 @@ export class CountryMenuItem extends React.Component<CountryItemProps> {
   }
 
   render() {
-    const {country, search, classes: classesProp, ...props} = this.props
+    const {country, search, classes: classesProp, onSelectCountry, ...props} = this.props
     const classes = classesProp!
     return <MenuItem component="div" onClick={this.handleClick} className={classes.menuItem} {...props}>
       <Grid container direction="row">
@@ -78,5 +78,4 @@ export class CountryMenuItem extends React.Component<CountryItemProps> {
       </Grid>
     </MenuItem>
   }
-
 }

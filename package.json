@@ -11,7 +11,7 @@
     "compile-watch": "tsc -w -p tsconfig.prod.json",
     "test": "mocha 'test/**/*.ts*' --require=ts-node/register --require mocha-clean",
     "bundle-watch": "webpack-dev-server --open",
-    "publish-local": "npm publish --@material-ui:registry=http://localhost:4873 --force",
+    "publish-local": "npm publish --registry=http://localhost:4873 --force",
     "lint": "tslint --fix '{src,test}/**/*.ts*'",
     "bundle": "webpack --config webpack.config.prod.js",
     "bundle-dev": "webpack",

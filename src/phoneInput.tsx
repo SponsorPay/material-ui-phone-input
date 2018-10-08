@@ -69,16 +69,16 @@ export interface PhoneInputProps {
 }
 
 export interface PhoneInputState {
-  phone: string,
-  anchorEl: null,
-  country: Country,
-  countries: Country[],
+  phone: string
+  anchorEl: HTMLElement | null
+  country: Country
+  countries: Country[]
   search: string
 }
 
 @(withStyles(styles) as any)
 export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState> {
-  list!: List
+  list: List | null = null
 
   state = {
     phone: "",
@@ -88,10 +88,10 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     search: ""
   }
 
-  handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const {onChange} = this.props
     const asYouType = new AsYouType()
-    let phone = asYouType.input(e.target.value)
+    let phone = asYouType.input(event.target.value)
     const alpha2 = asYouType.country
     const national = asYouType.getNationalNumber()
     const country = lookup.countries({alpha2})[0] || unknownCountry
@@ -105,7 +105,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     onChange && onChange(alpha2, national)
   }
 
-  handleClick = (event: any) => {
+  handleClick: React.MouseEventHandler<HTMLInputElement> = (event) => {
     this.setState({anchorEl: event.currentTarget})
   }
 
@@ -113,7 +113,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     this.setState({anchorEl: null})
   }
 
-  handleSearch = (event: any) => {
+  handleSearch: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const search = event.target.value
     const countries = allCountries.filter(country => new RegExp(`${search}`, "i").test(country.name))
     this.setState({
@@ -205,7 +205,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
                 <Input onChange={this.handleSearch} autoFocus disableUnderline
                        inputProps={{padding: 0}} value={this.state.search}
                        className={classes.hiddenInput}/>
-                {countries.length < 1 ? <Typography>There is no country match the result</Typography> :
+                {!countries.length ? <Typography>There is no country match the result</Typography> :
                   <List ref={this.listRef} height={250} rowHeight={36} rowCount={countries.length}
                         width={this.props.width || 331} rowRenderer={this.rowRenderer} overscanRowCount={10}
                   />}
