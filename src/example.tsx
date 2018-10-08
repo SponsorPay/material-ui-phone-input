@@ -1,3 +1,5 @@
+import FormControl from "@material-ui/core/FormControl"
+import InputLabel from "@material-ui/core/InputLabel"
 import Paper from "@material-ui/core/Paper"
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme"
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
@@ -20,11 +22,24 @@ const darkTheme = createMuiTheme({
 const lightTheme = createMuiTheme()
 
 ReactDOM.render(<div>
-  <PhoneInput label="Phone Number"/>
+  <PhoneInput />
 
   <MuiThemeProvider theme={darkTheme}>
     <Paper>
       <PhoneInput listTheme={lightTheme}/>
     </Paper>
   </MuiThemeProvider>
+
+  <PhoneInput
+    renderInput={
+      input =>
+        <FormControl>
+          <InputLabel>
+            Phone Number
+          </InputLabel>
+          {input}
+        </FormControl>
+    }
+  />
+
 </div>, document.getElementById("root"))

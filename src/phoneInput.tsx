@@ -1,8 +1,7 @@
 import ButtonBase from "@material-ui/core/ButtonBase/ButtonBase"
 import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener"
 import Grid from "@material-ui/core/Grid/Grid"
-import Input from "@material-ui/core/Input"
-import InputAdornment from "@material-ui/core/InputAdornment/InputAdornment"
+import Input, {InputProps} from "@material-ui/core/Input"
 import Paper from "@material-ui/core/Paper/Paper"
 import Popper from "@material-ui/core/Popper/Popper"
 import {Theme} from "@material-ui/core/styles/createMuiTheme"
@@ -19,6 +18,7 @@ import {CountryIcon} from "./countryIcon"
 import {CountryMenuItem} from "./countryMenuItem"
 
 const sortBy = require("lodash/sortBy")
+const identity = require("lodash/identity")
 
 const lookup = require("country-data").lookup
 
@@ -78,13 +78,11 @@ export const styles = {
 export interface PhoneInputProps {
   onBlur?: () => any,
   onChange?: (alpha2: string, phoneNumber: string) => any,
-  error?: boolean,
-  helperText?: string
   classes?: Classes<typeof styles>
   width?: number
-  label?: string
   fieldTheme?: Theme
   listTheme?: Theme
+  renderInput?: (input: React.ReactElement<InputProps>) => React.ReactNode
 }
 
 export interface PhoneInputState {
@@ -186,7 +184,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
   }
 
   render() {
-    const {error, helperText, label, classes: classesProp, fieldTheme, listTheme} = this.props
+    const {classes: classesProp, fieldTheme, listTheme, renderInput = identity} = this.props
     const {anchorEl, countries, country} = this.state
     const classes = classesProp!
 
@@ -196,16 +194,13 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
       fullWidth
       value={this.state.phone}
       className={classes.textField}
-      error={error}
       startAdornment={
-        <InputAdornment position="start" className={classes.input}>
-          <ButtonBase component="div" onClick={this.handleClick} className={classes.button}>
-            <Grid container direction="row" alignItems="center" wrap="nowrap">
-              <CountryIcon country={country} className={classes.buttonFlag}/>
-              <ArrowIcon/>
-            </Grid>
-          </ButtonBase>
-        </InputAdornment>
+        <ButtonBase component="div" onClick={this.handleClick} className={classes.button}>
+          <Grid container direction="row" alignItems="center" wrap="nowrap">
+            <CountryIcon country={country} className={classes.buttonFlag}/>
+            <ArrowIcon/>
+          </Grid>
+        </ButtonBase>
       }
     />
 
@@ -220,9 +215,11 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
         />}
     </Paper>
 
+    const fieldWithTheme = fieldTheme ? <MuiThemeProvider theme={fieldTheme}>{field}</MuiThemeProvider> : field
+
     return <React.Fragment>
 
-      {fieldTheme ? <MuiThemeProvider theme={fieldTheme}>{field}</MuiThemeProvider> : field}
+      {renderInput(fieldWithTheme)}
 
       <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-start" className={classes.popper}>
         <ClickAwayListener onClickAway={this.handleClose}>
