@@ -203,7 +203,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
         startAdornment:
           <InputAdornment position="start" className={classes.input}>
             <ButtonBase component="div" onClick={this.handleClick} className={classes.button}>
-              <Grid container direction="row" alignItems="center">
+              <Grid container direction="row" alignItems="center" wrap="nowrap">
                 <CountryIcon country={country} className={classes.buttonFlag}/>
                 <ArrowIcon/>
               </Grid>
