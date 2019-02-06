@@ -127,7 +127,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
   }
 
   handleClose = () => {
-    this.setState({anchorEl: null})
+    this.setState({anchorEl: null, countries: allCountries, search: ""})
   }
 
   handleSearch: React.ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -159,6 +159,15 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
   handleBlur = () => {
     const {onBlur} = this.props
     onBlur && onBlur()
+  }
+
+  emptyRow = ( {index, style}: ListRowProps) => {
+    return <Typography  key="unknown" style={{
+      fontWeight: 300,
+      paddingLeft: 8,
+      textAlign: "center",
+      ...style
+    }}>{"Country name not found: "}{this.state.search}</Typography>
   }
 
   rowRenderer = ({index, style}: ListRowProps) => {
@@ -203,16 +212,16 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
         </ButtonBase>
       }
     />
-
+    const rowRender = countries.length ? this.rowRenderer : this.emptyRow
+    const rowCount=countries.length ? countries.length : 1
     const list = <Paper className={classes.paper}>
       <div className={classes.hiddenInputRoot}>
         <input className={classes.hiddenInput} onChange={this.handleSearch} autoFocus value={this.state.search}/>
       </div>
-      {!countries.length ? <Typography>There is no country match the result</Typography> :
-        <List ref={this.listRef} height={250} rowHeight={36} rowCount={countries.length}
-              className={classes.list}
-              width={this.props.width || 331} rowRenderer={this.rowRenderer} overscanRowCount={10}
-        />}
+      <List ref={this.listRef} height={250} rowHeight={36} rowCount={rowCount}
+            className={classes.list}
+            width={this.props.width || 331} rowRenderer={rowRender} overscanRowCount={10}
+      />
     </Paper>
 
     const fieldWithTheme = fieldTheme ? <MuiThemeProvider theme={fieldTheme}>{field}</MuiThemeProvider> : field

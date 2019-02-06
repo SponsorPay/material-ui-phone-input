@@ -22,13 +22,6 @@ const darkTheme = createMuiTheme({
 const lightTheme = createMuiTheme()
 
 ReactDOM.render(<div>
-  <PhoneInput />
-
-  <MuiThemeProvider theme={darkTheme}>
-    <Paper>
-      <PhoneInput listTheme={lightTheme}/>
-    </Paper>
-  </MuiThemeProvider>
 
   <PhoneInput
     renderInput={
