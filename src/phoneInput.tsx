@@ -111,15 +111,16 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     let phone = asYouType.input(event.target.value)
     const alpha2 = asYouType.country
     const national = asYouType.getNationalNumber()
-    const country = lookup.countries({alpha2})[0] || unknownCountry
+    const country = lookup.countries({alpha2})[0] || this.state.country
     const code = country.countryCallingCodes[0]
     phone = alpha2 ? phone.replace(code, `(${code})`) : phone
     phone = phone.replace(/[^)]\s/g, (match: string) => match.replace(/\s/g, "-"))
     this.setState({
       phone,
       country,
+    }, () => {
+      onChange && onChange(country.alpha2, national)
     })
-    onChange && onChange(alpha2, national)
   }
 
   handleClick: React.MouseEventHandler<HTMLElement> = (event) => {
@@ -161,8 +162,8 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     onBlur && onBlur()
   }
 
-  emptyRow = ( {index, style}: ListRowProps) => {
-    return <Typography  key="unknown" style={{
+  emptyRow = ({index, style}: ListRowProps) => {
+    return <Typography key="unknown" style={{
       fontWeight: 300,
       paddingLeft: 8,
       textAlign: "center",
@@ -213,7 +214,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
       }
     />
     const rowRender = countries.length ? this.rowRenderer : this.emptyRow
-    const rowCount=countries.length ? countries.length : 1
+    const rowCount = countries.length ? countries.length : 1
     const list = <Paper className={classes.paper}>
       <div className={classes.hiddenInputRoot}>
         <input className={classes.hiddenInput} onChange={this.handleSearch} autoFocus value={this.state.search}/>

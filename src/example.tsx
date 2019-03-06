@@ -16,13 +16,19 @@ const darkTheme = createMuiTheme({
       default: "#1d0047",
       paper: "#1d0047"
     }
+  },
+  typography: {
+    useNextVariants: true
   }
 })
 
-const lightTheme = createMuiTheme()
+const lightTheme = createMuiTheme({
+  typography: {
+    useNextVariants: true
+  }
+})
 
 ReactDOM.render(<div>
-
   <PhoneInput
     renderInput={
       input =>
