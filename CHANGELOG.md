@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/SponsorPay/material-ui-phone-input/compare/v1.1.10...v1.2.0) (2019-03-06)
+
+
+### Features
+
+* keep selected country if AsYouType found nothing ([#8](https://github.com/SponsorPay/material-ui-phone-input/issues/8)) ([789b1e5](https://github.com/SponsorPay/material-ui-phone-input/commit/789b1e5))
+
+
+
 <a name="1.1.10"></a>
 ## [1.1.10](https://github.com/SponsorPay/material-ui-phone-input/compare/v1.1.9...v1.1.10) (2019-02-06)
 
