@@ -110,13 +110,16 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
   async componentDidMount(): Promise<void> {
     const {initPhone, initCountry} = this.props
     if (initPhone != null && initCountry != null) {
+      const currentCountry = this.state.country
       const country = this.props.initCountry != null ?
         await lookup.countries({alpha2: this.props.initCountry})[0] : unknownCountry
       const phone = this.props.initPhone != null ? this.props.initPhone : ""
-      this.setState({
-        country,
-        phone
-      })
+      if (this.state.country === currentCountry) {
+        this.setState({
+          country,
+          phone
+        })
+      }
     }
   }
 
