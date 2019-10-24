@@ -83,6 +83,8 @@ export interface PhoneInputProps {
   fieldTheme?: Theme
   listTheme?: Theme
   renderInput?: (input: React.ReactElement<InputProps>) => React.ReactNode
+  initPhone?: string
+  initCountry?: string
 }
 
 export interface PhoneInputState {
@@ -103,6 +105,22 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     country: unknownCountry,
     countries: allCountries,
     search: ""
+  }
+
+  async componentDidMount(): Promise<void> {
+    const {initPhone, initCountry} = this.props
+    if (initPhone != null && initCountry != null) {
+      const currentCountry = this.state.country
+      const country = this.props.initCountry != null ?
+        await lookup.countries({alpha2: this.props.initCountry})[0] : unknownCountry
+      const phone = this.props.initPhone != null ? this.props.initPhone : ""
+      if (this.state.country === currentCountry) {
+        this.setState({
+          country,
+          phone
+        })
+      }
+    }
   }
 
   handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
