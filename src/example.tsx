@@ -5,7 +5,9 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme"
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
-import {PhoneInput} from "./phoneInput"
+import {PhoneInput, PhoneInputProps, PhoneInputState} from "./phoneInput"
+
+const lookup = require("country-data").lookup
 
 const darkTheme = createMuiTheme({
   palette: {
@@ -28,17 +30,42 @@ const lightTheme = createMuiTheme({
   }
 })
 
-ReactDOM.render(<div>
-  <PhoneInput
-    renderInput={
-      input =>
-        <FormControl>
-          <InputLabel>
-            Phone Number
-          </InputLabel>
-          {input}
-        </FormControl>
-    }
-  />
+class App extends React.Component {
+  state = {
+    country: null as PhoneInputProps["country"],
+    phone: null as PhoneInputProps["phone"]
+  }
 
-</div>, document.getElementById("root"))
+  async componentDidMount() {
+    const country =  await lookup.countries({alpha2: "IL"})[0]
+    setTimeout(() => {
+      this.setState({
+        country,
+        phone: "3457643734"
+      })
+    }, 10)
+  }
+
+  render() {
+    return (
+      <div>
+        <PhoneInput
+          phone={"4353636"}
+          country={this.state.country}
+          renderInput={
+            input =>
+              <FormControl>
+                <InputLabel>
+                  Phone Number
+                </InputLabel>
+                {input}
+              </FormControl>
+          }
+        />
+
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById("root"))

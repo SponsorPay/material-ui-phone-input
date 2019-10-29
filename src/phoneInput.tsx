@@ -19,7 +19,6 @@ import {CountryMenuItem} from "./countryMenuItem"
 
 const sortBy = require("lodash/sortBy")
 const identity = require("lodash/identity")
-
 const lookup = require("country-data").lookup
 
 function getCountries(): Country[] {
@@ -77,14 +76,14 @@ export const styles = {
 
 export interface PhoneInputProps {
   onBlur?: () => any,
-  onChange?: (alpha2: string, phoneNumber: string) => any,
+  onChange?: (country: Country, phoneNumber: string) => any,
   classes?: Classes<typeof styles>
   width?: number
   fieldTheme?: Theme
   listTheme?: Theme
   renderInput?: (input: React.ReactElement<InputProps>) => React.ReactNode
-  initPhone?: string
-  initCountry?: string
+  phone?: string | null
+  country?: Country | null
 }
 
 export interface PhoneInputState {
@@ -99,27 +98,19 @@ export interface PhoneInputState {
 export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState> {
   list: List | null = null
 
-  state = {
-    phone: "",
-    anchorEl: null as any,
-    country: unknownCountry,
-    countries: allCountries,
-    search: ""
-  }
+  constructor(props: PhoneInputProps, ...args: any[]) {
+    super(props, ...args)
 
-  async componentDidMount(): Promise<void> {
-    const {initPhone, initCountry} = this.props
-    if (initPhone != null && initCountry != null) {
-      const currentCountry = this.state.country
-      const country = this.props.initCountry != null ?
-        await lookup.countries({alpha2: this.props.initCountry})[0] : unknownCountry
-      const phone = this.props.initPhone != null ? this.props.initPhone : ""
-      if (this.state.country === currentCountry) {
-        this.setState({
-          country,
-          phone
-        })
-      }
+    const country = this.props.country || unknownCountry
+
+    const phone = `(${country.countryCallingCodes[0]}) ${this.props.phone || ""}`
+
+    this.state = {
+      phone,
+      anchorEl: null as any,
+      country,
+      countries: allCountries,
+      search: ""
     }
   }
 
@@ -137,7 +128,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
       phone,
       country,
     }, () => {
-      onChange && onChange(country.alpha2, national)
+      onChange && onChange(country, national)
     })
   }
 
@@ -159,6 +150,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
   }
 
   handleCountryClick = (country: Country) => {
+    const {onChange} = this.props
     const {country: selectedCountry, phone: selectedPhone} = this.state
     const currentCallingCode = `(${selectedCountry.countryCallingCodes[0]})`
     const newCallingCode = `(${country.countryCallingCodes[0]})`
@@ -172,6 +164,8 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
       phone,
       country,
       countries: allCountries
+    }, () => {
+      onChange && onChange(country, phone)
     })
   }
 
