@@ -11,7 +11,7 @@ import Typography from "@material-ui/core/Typography/Typography"
 import ArrowIcon from "@material-ui/icons/ArrowDropDown"
 import {AsYouType} from "libphonenumber-js"
 import * as React from "react"
-import {List, ListRowProps} from "react-virtualized/dist/commonjs/List"
+import {FixedSizeList as List, ListChildComponentProps} from "react-window"
 import {Classes} from "./classes"
 import {Country} from "./country"
 import {CountryIcon} from "./countryIcon"
@@ -22,7 +22,8 @@ const identity = require("lodash/identity")
 const lookup = require("country-data").lookup
 
 function getCountries(): Country[] {
-  const countries = lookup.countries({status: "assigned"})
+  const countries = lookup
+    .countries({status: "assigned"})
     .filter((y: any) => y.countryCallingCodes != "")
   return sortBy(countries, "name")
 }
@@ -45,7 +46,7 @@ export const styles = {
     height: 0,
     padding: 0,
     outline: "none",
-    border: "none",
+    border: "none"
   },
   hiddenInputRoot: {
     overflow: "hidden"
@@ -70,13 +71,12 @@ export const styles = {
   paper: {
     display: "flex",
     borderRadius: 0
-  },
-
+  }
 }
 
 export interface PhoneInputProps {
-  onBlur?: () => any,
-  onChange?: (country: Country, phoneNumber: string) => any,
+  onBlur?: () => any
+  onChange?: (country: Country, phoneNumber: string) => any
   classes?: Classes<typeof styles>
   width?: number
   fieldTheme?: Theme
@@ -95,15 +95,19 @@ export interface PhoneInputState {
 }
 
 @(withStyles(styles) as any)
-export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState> {
-  list: List | null = null
+export class PhoneInput extends React.Component<
+  PhoneInputProps,
+  PhoneInputState
+> {
+  listRef = React.createRef<List>()
 
   constructor(props: PhoneInputProps, ...args: any[]) {
     super(props, ...args)
 
     const country = this.props.country || unknownCountry
 
-    const phone = `(${country.countryCallingCodes[0]}) ${this.props.phone || ""}`
+    const phone = `(${country.countryCallingCodes[0]}) ${this.props.phone ||
+      ""}`
 
     this.state = {
       phone,
@@ -114,7 +118,7 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     }
   }
 
-  handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+  handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
     const {onChange} = this.props
     const asYouType = new AsYouType()
     let phone = asYouType.input(event.target.value)
@@ -123,16 +127,21 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     const country = lookup.countries({alpha2})[0] || this.state.country
     const code = country.countryCallingCodes[0]
     phone = alpha2 ? phone.replace(code, `(${code})`) : phone
-    phone = phone.replace(/[^)]\s/g, (match: string) => match.replace(/\s/g, "-"))
-    this.setState({
-      phone,
-      country,
-    }, () => {
-      onChange && onChange(country, national)
-    })
+    phone = phone.replace(/[^)]\s/g, (match: string) =>
+      match.replace(/\s/g, "-")
+    )
+    this.setState(
+      {
+        phone,
+        country
+      },
+      () => {
+        onChange && onChange(country, national)
+      }
+    )
   }
 
-  handleClick: React.MouseEventHandler<HTMLElement> = (event) => {
+  handleClick: React.MouseEventHandler<HTMLElement> = event => {
     this.setState({anchorEl: event.currentTarget})
   }
 
@@ -140,9 +149,11 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     this.setState({anchorEl: null, countries: allCountries, search: ""})
   }
 
-  handleSearch: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+  handleSearch: React.ChangeEventHandler<HTMLInputElement> = event => {
     const search = event.target.value
-    const countries = allCountries.filter(country => new RegExp(search, "i").test(country.name))
+    const countries = allCountries.filter(country =>
+      new RegExp(search, "i").test(country.name)
+    )
     this.setState({
       search,
       countries
@@ -154,19 +165,22 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     const {country: selectedCountry, phone: selectedPhone} = this.state
     const currentCallingCode = `(${selectedCountry.countryCallingCodes[0]})`
     const newCallingCode = `(${country.countryCallingCodes[0]})`
-    const phone = selectedPhone.indexOf(currentCallingCode) !== -1 ? selectedPhone.replace(
-      currentCallingCode,
-      newCallingCode
-    ) : newCallingCode
-    this.setState({
-      anchorEl: null,
-      search: "",
-      phone,
-      country,
-      countries: allCountries
-    }, () => {
-      onChange && onChange(country, phone)
-    })
+    const phone =
+      selectedPhone.indexOf(currentCallingCode) !== -1
+        ? selectedPhone.replace(currentCallingCode, newCallingCode)
+        : newCallingCode
+    this.setState(
+      {
+        anchorEl: null,
+        search: "",
+        phone,
+        country,
+        countries: allCountries
+      },
+      () => {
+        onChange && onChange(country, phone)
+      }
+    )
   }
 
   handleBlur = () => {
@@ -174,80 +188,119 @@ export class PhoneInput extends React.Component<PhoneInputProps, PhoneInputState
     onBlur && onBlur()
   }
 
-  emptyRow = ({index, style}: ListRowProps) => {
-    return <Typography key="unknown" style={{
-      fontWeight: 300,
-      paddingLeft: 8,
-      textAlign: "center",
-      ...style
-    }}>{"Country name not found: "}{this.state.search}</Typography>
+  emptyRow = ({index, style}: ListChildComponentProps) => {
+    return (
+      <Typography
+        key="unknown"
+        style={{
+          fontWeight: 300,
+          paddingLeft: 8,
+          textAlign: "center",
+          ...style
+        }}
+      >
+        {"Country name not found: "}
+        {this.state.search}
+      </Typography>
+    )
   }
 
-  rowRenderer = ({index, style}: ListRowProps) => {
+  rowRenderer = ({index, style}: ListChildComponentProps) => {
     const {countries} = this.state
     const country = countries[index]
-    return <CountryMenuItem
-      key={country.name}
-      country={country}
-      style={{...style, boxSizing: "border-box"}}
-      onSelectCountry={this.handleCountryClick}
-      search={this.state.search}
-    />
-  }
-
-  listRef = (list: List) => {
-    this.list = list
-  }
-
-  componentDidUpdate(prevProps: PhoneInputProps, prevState: PhoneInputState) {
-    if (prevState.countries != this.state.countries) {
-      this.list && this.list.forceUpdateGrid()
-    }
+    return (
+      <CountryMenuItem
+        key={country.name}
+        country={country}
+        style={{...style, boxSizing: "border-box"}}
+        onSelectCountry={this.handleCountryClick}
+        search={this.state.search}
+      />
+    )
   }
 
   render() {
-    const {classes: classesProp, fieldTheme, listTheme, renderInput = identity} = this.props
+    const {
+      classes: classesProp,
+      fieldTheme,
+      listTheme,
+      renderInput = identity
+    } = this.props
     const {anchorEl, countries, country} = this.state
     const classes = classesProp!
 
-    const field = <Input
-      onChange={this.handleChange}
-      onBlur={this.handleBlur}
-      fullWidth
-      value={this.state.phone}
-      className={classes.textField}
-      startAdornment={
-        <ButtonBase component="div" onClick={this.handleClick} className={classes.button}>
-          <Grid container direction="row" alignItems="center" wrap="nowrap">
-            <CountryIcon country={country} className={classes.buttonFlag}/>
-            <ArrowIcon/>
-          </Grid>
-        </ButtonBase>
-      }
-    />
+    const field = (
+      <Input
+        onChange={this.handleChange}
+        onBlur={this.handleBlur}
+        fullWidth
+        value={this.state.phone}
+        className={classes.textField}
+        startAdornment={
+          <ButtonBase
+            component="div"
+            onClick={this.handleClick}
+            className={classes.button}
+          >
+            <Grid container direction="row" alignItems="center" wrap="nowrap">
+              <CountryIcon country={country} className={classes.buttonFlag} />
+              <ArrowIcon />
+            </Grid>
+          </ButtonBase>
+        }
+      />
+    )
     const rowRender = countries.length ? this.rowRenderer : this.emptyRow
     const rowCount = countries.length ? countries.length : 1
-    const list = <Paper className={classes.paper}>
-      <div className={classes.hiddenInputRoot}>
-        <input className={classes.hiddenInput} onChange={this.handleSearch} autoFocus value={this.state.search}/>
-      </div>
-      <List ref={this.listRef} height={250} rowHeight={36} rowCount={rowCount}
-            className={classes.list}
-            width={this.props.width || 331} rowRenderer={rowRender} overscanRowCount={10}
-      />
-    </Paper>
+    const list = (
+      <Paper className={classes.paper}>
+        <div className={classes.hiddenInputRoot}>
+          <input
+            className={classes.hiddenInput}
+            onChange={this.handleSearch}
+            autoFocus
+            value={this.state.search}
+          />
+        </div>
+        <List
+          ref={this.listRef}
+          height={250}
+          itemSize={36}
+          itemCount={rowCount}
+          className={classes.list}
+          width={this.props.width || 331}
+          overscanCount={10}
+        >
+          {rowRender}
+        </List>
+      </Paper>
+    )
 
-    const fieldWithTheme = fieldTheme ? <MuiThemeProvider theme={fieldTheme}>{field}</MuiThemeProvider> : field
+    const fieldWithTheme = fieldTheme ? (
+      <MuiThemeProvider theme={fieldTheme}>{field}</MuiThemeProvider>
+    ) : (
+      field
+    )
 
-    return <React.Fragment>
+    return (
+      <>
+        {renderInput(fieldWithTheme)}
 
-      {renderInput(fieldWithTheme)}
-
-      <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-start" className={classes.popper}>
-        <ClickAwayListener onClickAway={this.handleClose}>
-          {listTheme ? <MuiThemeProvider theme={listTheme}>{list}</MuiThemeProvider> : list}
-        </ClickAwayListener>
-      </Popper>
-    </React.Fragment>
+        <Popper
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          placement="bottom-start"
+          className={classes.popper}
+        >
+          <ClickAwayListener onClickAway={this.handleClose}>
+            {listTheme ? (
+              <MuiThemeProvider theme={listTheme}>{list}</MuiThemeProvider>
+            ) : (
+              list
+            )}
+          </ClickAwayListener>
+        </Popper>
+      </>
+    )
   }
 }

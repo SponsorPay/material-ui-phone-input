@@ -14,8 +14,8 @@ export interface CountryIconProps extends HTMLAttributes<HTMLDivElement> {
 
 const styles = {
   root: {
-    width: 26,
-},
+    width: 26
+  },
   image: {
     height: 20,
     borderRadius: 3,
