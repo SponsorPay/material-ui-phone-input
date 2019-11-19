@@ -106,28 +106,36 @@ export class PhoneInput extends React.Component<
 
     const country = this.props.country || unknownCountry
 
-    const phone = `(${country.countryCallingCodes[0]}) ${this.props.phone ||
-      ""}`
-
-    this.state = {
-      phone,
+    const state = {
+      phone: "",
       anchorEl: null as any,
       country,
       countries: allCountries,
       search: ""
     }
+
+    if (this.props.phone) {
+      const asYouType = new AsYouType()
+      const parsedPhone = asYouType.input(this.props.phone)
+      const alpha2 = asYouType.country
+      const code = country.countryCallingCodes[0]
+      const phoneWithCountry = alpha2 ? parsedPhone.replace(code, `(${code})`) : parsedPhone
+      state.phone = phoneWithCountry.replace(/[^)]\s/g, (match: string) => match.replace(/\s/g, "-"))
+    }
+
+    this.state = state
   }
 
   handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
     const {onChange} = this.props
     const asYouType = new AsYouType()
-    let phone = asYouType.input(event.target.value)
+    const parsedPhone = asYouType.input(event.target.value)
     const alpha2 = asYouType.country
     const national = asYouType.getNationalNumber()
     const country = lookup.countries({alpha2})[0] || this.state.country
     const code = country.countryCallingCodes[0]
-    phone = alpha2 ? phone.replace(code, `(${code})`) : phone
-    phone = phone.replace(/[^)]\s/g, (match: string) =>
+    const phoneWithCountry = alpha2 ? parsedPhone.replace(code, `(${code})`) : parsedPhone
+    const phone = phoneWithCountry.replace(/[^)]\s/g, (match: string) =>
       match.replace(/\s/g, "-")
     )
     this.setState(
