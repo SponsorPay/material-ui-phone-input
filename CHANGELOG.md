@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/SponsorPay/material-ui-phone-input/compare/v3.0.0...v3.0.1) (2019-11-19)
+
+
+### Bug Fixes
+
+* initial value ([#13](https://github.com/SponsorPay/material-ui-phone-input/issues/13)) ([f37edbb](https://github.com/SponsorPay/material-ui-phone-input/commit/f37edbb))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/SponsorPay/material-ui-phone-input/compare/v2.0.0...v3.0.0) (2019-11-18)
 
